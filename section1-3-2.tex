@@ -1,0 +1,9 @@
+\subsection{Asynchronous Agents}
+Asynchronous Agents 是一系列的异步操作的组合。每个异步操作都作为 Asynchronous Agents 的一部分运行，即使 Asynchronous Agents 只有单个异步操作。Asynchronous Agents 是一个实体，可以和其他 agents 同时工作。Asynchronous Agents 对于异步操作来说就像是线程对于同步操作的地位。
+
+然而，异步代理是一种纯粹的概念性构造，它允许我们推理程序中异步操作的上下文和组合。“异步代理”这个名称不会出现在库中，使用哪种具体机制（Such as chains of lambdas, coroutines, fibers, state machines, etc）来组合代理中的异步操作也不重要。
+
+可以将异步代理看作如下：
+
+异步代理交替等待异步操作完成，然后为该操作运行完成处理程序。在代理的上下文中，这些完成处理程序表示不可分割的可调度工作单元。
+

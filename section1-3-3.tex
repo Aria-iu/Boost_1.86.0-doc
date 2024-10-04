@@ -1,0 +1,43 @@
+\subsection{Associated Characteristics and Associators}
+Asynchronous agent 具有 associated characteristics ，指定了异步操作在作为该代理的一部分组合时的行为方式，例如：
+\begin{itemize}
+	\item 分配器，决定代理的异步操作如何获取内存资源。
+	\item 取消槽，决定代理的异步操作如何支持取消。
+	\item 执行器，决定代理的完成处理程序将如何排队和运行。
+\end{itemize}
+
+当在异步代理中运行异步操作时，其实现可能会查询这些相关特征，并使用它们来满足它们所代表的要求或偏好。异步操作通过将关联符特征应用于完成处理程序来执行这些查询。每个特征都有相应的关联特征。
+
+关联特征可能专门用于具体的完成处理程序类型，以：
+\begin{itemize}
+	\item 接受异步操作提供的默认特性，按原样返回此默认值
+	\item 返回该特性的无关实现，或
+	\item 调整提供的默认值，以引入完成处理程序所需的其他行为。
+\end{itemize}
+
+\emph{Associator 规范}
+
+给定一个名为 associated\_R 的关联器特征(The associator traits are named associated\_allocator, associated\_executor, and associated\_cancellation\_slot.)，具有：
+\begin{itemize}
+	\item s类型的源值s（在这种情况下为完成处理程序及其类型），
+	\item 定义相关特征的句法和语义要求的一组类型要求（或概念）R，以及
+	\item 满足类型要求R的c类候选值c，表示异步操作提供的相关特性的默认实现
+\end{itemize}
+
+异步操作使用关联器特性来计算：
+\begin{itemize}
+	\item 类型associated\_R<S，C>：type，以及
+	\item 关联的值associated\_R<S，C>：get（S，C）
+\end{itemize}
+满足R中定义的要求。为了方便起见，这些也可以分别通过类型别名associated\_R\_t<S，C>和函数get\_associate\_R（S，C）访问。
+
+该特征的主要模板被指定为：
+\begin{itemize}
+	\item 如果S:：R\_type格式正确，则将嵌套类型别名类型定义为S:：R\_ type，并定义一个返回S.get\_R（）的静态成员函数
+	\item 否则，如果associator<associated\_R，S，C>：：type格式良好并且表示一个类型，则继承自associator<associated\_R，S，C>
+	\item 否则，将嵌套类型别名类型定义为C，并定义一个返回C的静态成员函数get。
+\end{itemize}
+
+
+
+

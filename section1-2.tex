@@ -1,0 +1,115 @@
+\section{基础 Boost.Asio 剖析}
+Boost.Asio 可以有同步或者异步的操作，例如 Sockets 。在使用 Boost.Asio 之前，有一个各种 Boost.Asio 不同部分的概念图是有所帮助的。
+
+作为一个入门示例，让我们来考虑一下当你在一个 Socket 上执行连接操作时会发生什么。我们将从研究同步操作开始。
+
+你的程序至少含有一个IO execution context，就是 boost::asio::io\_context 、 boost::asio::thread\_pool 或者 boost::asio::system\_context 对象。这个IO execution context 代表着你的程序如何连接操作系统的IO服务。
+
+
+\begin{lstlisting}[frame=shadowbox]
+boost::asio::io_context io_context;
+\end{lstlisting}
+
+为了执行IO操作，程序需要一个IO object ，比如一个 TCP Socket 。
+
+\begin{lstlisting}[frame=shadowbox]
+boost::asio::ip::tcp::socket socket(io_context);
+\end{lstlisting}
+
+当一个同步连接操作执行后，下面一系列的事件就会发生：
+
+\begin{itemize}
+	\item 程序在socket对象（IO对象）上调用方法来初始化连接操作
+	\begin{lstlisting}[frame=shadowbox]
+socket.connect(server_port);
+	\end{lstlisting}
+	\item IO对象进而执行IO 执行上下文
+	\item IO执行上下文通过系统调用进行连接操作
+	\item 操作系统将返回值返回给IO上下文的调用处
+	\item IO上下文将所有错误统一转化为一个 boost::system::error\_code的对象来表示。一个error\_code可以被比较，测试是不是任何bool值。之后，结果就被返回给IO对象
+	\item 如果操作失败，IO对象抛出一个异常，类型是boost::system::system\_error。如果初始化代码写成如下形式：
+	\begin{lstlisting}[frame=shadowbox]
+boost::system::error_code ec;	
+socket.connect(server_port,ec);
+	\end{lstlisting}
+	那么，ec就被设置为这个操作的结果，而不会抛出异常
+\end{itemize}
+
+以上是同步连接的操作，当使用异步操作时，会有不同的事件序列。
+
+\begin{itemize}
+	\item 程序在socket对象（IO对象）上调用方法来初始化连接操作
+	\begin{lstlisting}[frame=shadowbox]
+socket.async_connect(server_port,your_completion_handler);
+	\end{lstlisting}
+	这里的 your\_completion\_handler 是一个函数或者一个有这样签名的函数对象：
+	\begin{lstlisting}[frame=shadowbox]
+void your_completion_handler(const boost::system::error_code& ec);
+	\end{lstlisting}
+	具体的签名还要看具体的异步操作
+	\item IO对象进而执行IO 执行上下文
+	\item IO执行上下文向操作系统发送请求，需要开启一个异步连接
+	
+	程序等待时间（在同步操作中，程序需要等待操作系统连接操作结束），在异步操作中，不需要等待，调用直接返回。
+	
+	\item 操作系统通过在一个queue中放置一个结果来提醒连接操作完成，准备被IO执行上下文获取
+	\item 当使用 io\_context 作为上下文时，程序必须调用 io\_context::run()，进而保证操作的结果被获取到。调用这个函数时，如果有未完成的异步操作，程序会阻塞，所以最好在第一个异步操作之后就调用它
+	\item 在这个 run 函数中，IO执行上下文会将结果从 queue 出队，转换为 error\_code ，再传递给 your\_completion\_handler
+\end{itemize}
+\newpage
+下面给出一个实例，作为执行逻辑的参考
+\begin{lstlisting}[frame=shadowbox]
+#include <iostream>
+#include <boost/asio.hpp>
+
+using boost::asio::ip::tcp;
+
+void on_connect(const boost::system::error_code& error) {
+	if (!error) {
+		std::cout << "Connected to the server!" << std::endl;
+	} else {
+		std::cerr << "Failed to connect: " << error.message() << std::endl;
+	}
+}
+
+void on_write(const boost::system::error_code& error, std::size_t bytes_transferred) {
+	if (!error) {
+		std::cout << "Message sent! Bytes transferred: " << bytes_transferred << std::endl;
+	} else {
+		std::cerr << "Failed to send message: " << error.message() << std::endl;
+	}
+}
+
+int main() {
+	try {
+		boost::asio::io_context io_context;
+		
+		// 创建一个TCP socket
+		tcp::socket socket(io_context);
+		
+		// 解析服务器地址
+		tcp::resolver resolver(io_context);
+		auto endpoints = resolver.resolve("127.0.0.1", "8080");
+		
+		// 异步连接到服务器
+		boost::asio::async_connect(socket, endpoints, on_connect);
+		
+		// 运行I/O上下文以处理异步操作
+		io_context.run();
+		
+		// 构建要发送的消息
+		std::string message = "Hello, Server!";
+		
+		// 异步发送消息到服务器
+		boost::asio::async_write(socket, boost::asio::buffer(message), on_write);
+		
+		// 再次运行I/O上下文以处理异步写操作
+		io_context.run();
+	} catch (std::exception& e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+	}
+	
+	return 0;
+}
+\end{lstlisting}
+io\_context.run() 会阻塞异步操作直到完成，这就为总体上的异步操作执行顺序提供了基准。

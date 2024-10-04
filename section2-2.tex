@@ -1,0 +1,10 @@
+\section{依赖}
+为了链接使用 Boost.Asio 的程序，下列库必须可用：
+\begin{itemize}
+	\item 使用 boost::system::error\_code 和 boost::system::system\_error classes ，需要 Boost.System
+	\item 使用 spawn() 启动协程，可能需要 Boost.Coroutine
+	\item 使用任何 read\_until() or async\_read\_until() 的重载，接收 boost::regex 参数，可能需要 Boost.Regex 
+	\item 使用  Boost.Asio's SSL 支持，可能需要 OpenSSL
+\end{itemize}
+
+	

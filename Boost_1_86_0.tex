@@ -1,0 +1,26 @@
+\documentclass[utf8]{book}
+\usepackage{titletoc}
+\usepackage{titlesec}
+\usepackage{ctexcap}
+\usepackage[b5paper,text={125mm,195mm},centering,left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage[]{geometry}
+\usepackage{imakeidx}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\makeindex
+\bibliographystyle{plain}
+\lstset{
+	breaklines = true
+}
+\begin{document}
+	本文档是 Boost.Asio 1.86.0 中文文档。
+	
+	Boost.Asio 是一个跨平台的C++库，致力于提供网络和底层IO编程，为开发者提供一个使用C++异步模型的途径。
+	
+	\input{chapter1.tex}
+	\input{chapter2.tex}
+	\input{chapter3.tex}
+	\input{chapter4.tex}
+\end{document}

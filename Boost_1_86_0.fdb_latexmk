@@ -1,0 +1,17 @@
+# Fdb version 4
+["pdflatex"] 1725341819.36579 "Boost_1_86_0.tex" "Boost_1_86_0.pdf" "Boost_1_86_0" 1725341819.52017 2
+  "/usr/share/texmf-dist/tex/latex/base/bk10.clo" 1716849630 8288 82eb4750175f9093ea089563156e1d65 ""
+  "/usr/share/texmf-dist/tex/latex/base/book.cls" 1716849630 23268 80674e17dbdc75804bd4d067e837600a ""
+  "/usr/share/texmf-dist/tex/latex/fontspec/fontspec.sty" 1716849630 3484 ff877041166391bc5ca8a1e45614784e ""
+  "/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1716849630 30006 3d512c0edd558928ddea1690180ef77e ""
+  "/usr/share/texmf-dist/tex/latex/l3kernel/expl3.sty" 1716849630 6565 10e89ed128ccd59431746bbdd82129fc ""
+  "/usr/share/texmf-dist/tex/latex/l3packages/xparse/xparse.sty" 1716849630 9327 11bedad2ac38f92e405a38ed18489a03 ""
+  "/usr/share/texmf-dist/web2c/texmf.cnf" 1716849630 41588 b43d3e860a4f94167ee1e725ff526a72 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1725325825 7113270 c4e1e7a6adbe5c5f35386770af70f898 ""
+  "Boost_1_86_0.aux" 1725341762.91746 1022 5bf27e864e5d31448909bcb3ced5b27b "pdflatex"
+  "Boost_1_86_0.tex" 1725341761.44411 1883 1e7cc128f5bb3ce3433bb9cdd24220f2 ""
+  (generated)
+  "Boost_1_86_0.aux"
+  "Boost_1_86_0.log"
+  "Boost_1_86_0.pdf"
+  (rewritten before read)

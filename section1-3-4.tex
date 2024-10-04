@@ -1,0 +1,19 @@
+\subsection{Child Agents}
+代理内的异步操作本身可以通过子代理来实现(In Boost.Asio these asynchronous operations are referred to as composed operations)。就父代理而言，它正在等待单个异步操作的完成。构成子代理的异步操作按顺序运行，当最终完成处理程序运行时，父代理将恢复。
+
+与单个异步操作一样，构建在子代理上的异步操作必须在调用完成处理程序之前释放其临时资源。我们也可以将这些子代理视为在调用完成处理程序之前结束其生命周期的资源。
+
+当异步操作创建子代理时，它可能会将父代理的相关特征传播(Typically, by specialising the associator trait and forwarding to the outer completion handler)到子代理。然后，这些相关特征可以通过异步操作和子代理的其他层递归传播。这种异步操作的堆叠复制了同步操作的另一个属性。
+
+同步操作的特性：
+\begin{itemize}
+	\item 同步操作的组合可以被重构，以使用在同一线程上运行的子函数（即简单调用），而不会改变功能
+\end{itemize}
+
+
+异步操作的等价特性：
+\begin{itemize}
+	\item 异步代理可以被重构为使用异步操作和共享父代理相关特征的子代理，而不会改变功能。
+\end{itemize}
+
+最后，一些异步操作可以通过并发运行的多个子代理来实现。在这种情况下，异步操作可以选择性地传播父代理的相关特征。
